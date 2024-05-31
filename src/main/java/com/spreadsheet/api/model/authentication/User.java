@@ -1,5 +1,6 @@
 package com.spreadsheet.api.model.authentication;
 
+import com.spreadsheet.api.model.spreadsheet.Spreadsheet;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,8 @@ public class User implements UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Spreadsheet> spreadsheets;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
