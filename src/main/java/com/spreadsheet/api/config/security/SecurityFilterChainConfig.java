@@ -21,11 +21,23 @@ public class SecurityFilterChainConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userDetailsService;
 
+    private static final String API_V1 = "/api/v1";
+
+    private static final String[] AUTH_WHITELIST = {
+            API_V1.concat("/auth/register"),
+            API_V1.concat("/auth/login"),
+    };
+
+    private static final String[] ELEVATED_LIST = {
+            API_V1.concat("/user/all"),
+    };
+
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(r -> r
-                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers(ELEVATED_LIST).hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(userDetailsService)
