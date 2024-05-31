@@ -1,6 +1,6 @@
 package com.spreadsheet.api.config.security;
 
-import com.spreadsheet.api.repository.UserDetailsService;
+import com.spreadsheet.api.service.authentication.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

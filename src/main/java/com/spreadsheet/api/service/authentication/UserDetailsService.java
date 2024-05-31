@@ -1,5 +1,6 @@
-package com.spreadsheet.api.repository;
+package com.spreadsheet.api.service.authentication;
 
+import com.spreadsheet.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

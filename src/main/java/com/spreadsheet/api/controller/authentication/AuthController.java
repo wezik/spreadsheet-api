@@ -1,4 +1,4 @@
-package com.spreadsheet.api.controller;
+package com.spreadsheet.api.controller.authentication;
 
 import com.spreadsheet.api.dto.authentication.AuthenticationRequest;
 import com.spreadsheet.api.dto.authentication.RegistrationRequest;
