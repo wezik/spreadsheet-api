@@ -26,6 +26,7 @@ public class User implements UserDetails {
     private Role role;
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Spreadsheet> spreadsheets;
+    private boolean enabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -49,6 +50,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 }

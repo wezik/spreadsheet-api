@@ -49,6 +49,7 @@ public class AuthenticationService {
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(userRepository.count() == 0 ? Role.ADMIN : Role.USER);
+        user.setEnabled(true);
         user = userRepository.save(user);
 
         var response = new AuthenticationResponse();
