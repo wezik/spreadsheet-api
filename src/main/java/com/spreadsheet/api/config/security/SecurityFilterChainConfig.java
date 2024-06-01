@@ -1,9 +1,11 @@
 package com.spreadsheet.api.config.security;
 
+import com.spreadsheet.api.model.authentication.Role;
 import com.spreadsheet.api.service.authentication.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,22 +25,30 @@ public class SecurityFilterChainConfig {
 
     private static final String API_V1 = "/api/v1";
 
-    private static final String[] AUTH_WHITELIST = {
-            API_V1.concat("/auth/register"),
-            API_V1.concat("/auth/login"),
+    // Whitelist of endpoints that do not require authentication
+    private static final RequestPermissions[] AUTH_WHITELIST = {
+            new RequestPermissions(HttpMethod.POST, API_V1.concat("/auth/register"), null),
+            new RequestPermissions(HttpMethod.GET, API_V1.concat("/auth/login"), null),
     };
 
-    private static final String[] ELEVATED_LIST = {
-            API_V1.concat("/user/all"),
+    // Custom endpoints that require a specific role
+    private static final RequestPermissions[] AUTH_CUSTOMS = {
+            new RequestPermissions(HttpMethod.GET, API_V1.concat("/user/all"), Role.ADMIN.name()),
+            new RequestPermissions(HttpMethod.DELETE, API_V1.concat("/user"), Role.ADMIN.name()),
     };
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(r -> r
-                        .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .requestMatchers(ELEVATED_LIST).hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(r -> {
+                    for (RequestPermissions request : AUTH_WHITELIST) {
+                        r.requestMatchers(request.httpMethod(), request.endpoint()).permitAll();
+                    }
+                    for (RequestPermissions request : AUTH_CUSTOMS) {
+                        r.requestMatchers(request.httpMethod(), request.endpoint()).hasRole(request.minimumRole());
+                    }
+                    r.anyRequest().authenticated();
+                })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(userDetailsService)
                 .authenticationProvider(authenticationProvider)
