@@ -34,4 +34,13 @@ public class SpreadsheetController {
         return ResponseEntity.ok(opt.get());
     }
 
+    @PutMapping("sheet")
+    public ResponseEntity<?> createSheetForCurrentUser(@RequestParam(name = "title", required = false) String title, @RequestParam(name = "spreadsheetId") Long spreadsheetId) {
+        var opt = spreadsheetService.createSheetForCurrentUser(title, spreadsheetId);
+        if (opt.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(opt.get());
+    }
+
 }
